@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File
 from app.vision_extractor import pdf_to_base64_images, extract_financials
 from app.summary import generate_summary
-from app.analytics import calculate_ratios, yoy_growth
+from app.analytics import calculate_ratios, yoy_growth, calculate_financial_health_score
 
 app = FastAPI()
 
@@ -26,6 +26,7 @@ async def extract_data(
     previous_ratios = calculate_ratios(previous_data)
 
     growth = yoy_growth(current_data, previous_data)
+    health = calculate_financial_health_score(current_ratios, growth)
 
     summary = generate_summary(
     current_data,
@@ -41,6 +42,7 @@ async def extract_data(
     "current_ratios": current_ratios,
     "previous_ratios": previous_ratios,
     "yoy_growth": growth,
+    "financial_health": health,
     "executive_summary": summary
 }
     
